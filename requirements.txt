@@ -5,4 +5,4 @@ pymysql
 python-dotenv
 pydantic
 pytest
-pytest-cypress
+cypress
