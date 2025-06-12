@@ -16,7 +16,6 @@ def create_admin():
             birthdate="1990-01-01",
             city="Paris",
             postal_code="75000",
-            is_admin=True
         )
         db.add(new_admin)
         db.commit()

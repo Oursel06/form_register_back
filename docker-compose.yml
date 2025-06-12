@@ -1,18 +1,34 @@
 version: '3.8'
+
 services:
-  api:
+  backend:
     build: .
+    container_name: form_register_back
     ports:
       - "8000:8000"
-    env_file: .env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=417950
+      - DB_PASSWORD=22Decembre00
+      - DB_NAME=ourselynov_form_register_back
     depends_on:
       - db
+    volumes:
+      - .:/app
 
   db:
-    image: mysql:8
-    restart: always
+    image: mysql:8.0
+    container_name: mysql_db
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: formdb
+      MYSQL_ROOT_PASSWORD: 22Decembre00
+      MYSQL_DATABASE: ourselynov_form_register_back
+      MYSQL_USER: 417950
+      MYSQL_PASSWORD: 22Decembre00
     ports:
       - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

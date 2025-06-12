@@ -11,4 +11,3 @@ class User(Base):
     city = Column(String(100))
     postal_code = Column(String(20))
     password = Column(String(255))
-    is_admin = Column(Boolean, default=False)

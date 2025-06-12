@@ -21,7 +21,6 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         city=user.city,
         postal_code=user.postal_code,
         password=user.password,
-        is_admin=False
     )
     db.add(db_user)
     db.commit()
@@ -30,12 +29,12 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/users", response_model=list[schemas.UserOut])
 def list_users(db: Session = Depends(get_db)):
-    users = db.query(models.User).filter(models.User.is_admin == False).all()
+    users = db.query(models.User).all()
     return users
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, email: str, db: Session = Depends(get_db)):
-    admin = db.query(models.User).filter_by(email=email, is_admin=True).first()
+    admin = db.query(models.User).filter_by(email=email).first()
     if not admin:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
