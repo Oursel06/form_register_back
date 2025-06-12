@@ -13,7 +13,6 @@ def get_db():
 
 @router.post("/users", response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # tu peux ici vérifier si email existe déjà etc.
     db_user = models.User(
         firstname=user.firstname,
         lastname=user.lastname,
@@ -21,12 +20,12 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         birthdate=user.birthdate,
         city=user.city,
         postal_code=user.postal_code,
-        password=user.password,  # idéalement hasher avant de sauvegarder
+        password=user.password,
         is_admin=False
     )
     db.add(db_user)
     db.commit()
-    db.refresh(db_user)  # récupère les infos générées (ex: id)
+    db.refresh(db_user)
     return db_user
 
 @router.get("/users", response_model=list[schemas.UserOut])
