@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from app import database, models
+from app import database, models, schemas
 
 router = APIRouter()
 
@@ -11,15 +11,28 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/users")
-def create_user(user: models.User, db: Session = Depends(get_db)):
-    db.add(user)
+@router.post("/users", response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    # tu peux ici vérifier si email existe déjà etc.
+    db_user = models.User(
+        firstname=user.firstname,
+        lastname=user.lastname,
+        email=user.email,
+        birthdate=user.birthdate,
+        city=user.city,
+        postal_code=user.postal_code,
+        password=user.password,  # idéalement hasher avant de sauvegarder
+        is_admin=False
+    )
+    db.add(db_user)
     db.commit()
-    return {"message": "Utilisateur enregistré"}
+    db.refresh(db_user)  # récupère les infos générées (ex: id)
+    return db_user
 
-@router.get("/users")
+@router.get("/users", response_model=list[schemas.UserOut])
 def list_users(db: Session = Depends(get_db)):
-    return db.query(models.User).filter(models.User.is_admin == False).all()
+    users = db.query(models.User).filter(models.User.is_admin == False).all()
+    return users
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, email: str, db: Session = Depends(get_db)):
