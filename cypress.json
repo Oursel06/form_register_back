@@ -1,8 +1,0 @@
-{
-    "baseUrl": "https://form-register-back.vercel.app",
-    "integrationFolder": "cypress/integration",
-    "testFiles": "**/*.spec.js",
-    "env": {
-        "NODE_ENV": "production"
-    }
-}
