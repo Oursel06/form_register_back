@@ -6,6 +6,7 @@ import jwt
 import bcrypt
 from datetime import datetime, timedelta
 import os
+from app.schemas import LoginRequest
 
 router = APIRouter()
 
@@ -57,6 +58,20 @@ def delete_user(
 def login(email: str, password: str, db: Session = Depends(get_db)):
     user = db.query(models.User).filter_by(email=email).first()
     if not user or not bcrypt.checkpw(password.encode(), user.password.encode()):
+        raise HTTPException(status_code=401, detail="Identifiants invalides")
+    
+    token_data = {
+        "email": user.email,
+        "is_admin": user.is_admin,
+        "exp": datetime.utcnow() + timedelta(hours=2)
+    }
+    token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
+    return {"access_token": token}
+
+@router.post("/login")
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter_by(email=data.email).first()
+    if not user or not bcrypt.checkpw(data.password.encode(), user.password.encode()):
         raise HTTPException(status_code=401, detail="Identifiants invalides")
     
     token_data = {

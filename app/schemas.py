@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 from datetime import date
 
 class UserCreate(BaseModel):
@@ -21,3 +20,7 @@ class UserOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
