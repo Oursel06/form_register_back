@@ -8,7 +8,7 @@ from app import models
 from app.database import get_db
 
 security = HTTPBearer()
-SECRET_KEY = os.getenv("SECRET_KEY", "votre_clé_secrète_par_défaut")
+SECRET_KEY = os.getenv("SECRET_KEY", "default_key")
 
 def admin_required(
     credentials: HTTPAuthorizationCredentials = Depends(security),
@@ -16,7 +16,9 @@ def admin_required(
 ):
     try:
         token = credentials.credentials
+        print("Token reçu :", token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        print("Payload décodé :", payload)
         email = payload.get("email")
 
         if not email:
