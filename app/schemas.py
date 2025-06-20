@@ -16,8 +16,10 @@ class UserOut(BaseModel):
     firstname: str
     lastname: str
     email: str
+    birthdate: date
     city: str
     postal_code: str
+    is_admin: bool
 
     class Config:
         orm_mode = True
