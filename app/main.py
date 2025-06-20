@@ -4,12 +4,21 @@ from app.database import get_db
 from app.models import User
 import bcrypt
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-app.include_router(users.router, prefix="/api")
+# Pour permettre les requêtes CORS depuis localhost
+origins_regex = r"http://localhost:\d+"
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=origins_regex,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app.include_router(users.router)
+app.include_router(users.router, prefix="/api")
 
 @app.get("/")
 def read_root():
