@@ -6,7 +6,6 @@ import jwt
 import bcrypt
 from datetime import datetime, timedelta
 import os
-from app.schemas import LoginRequest
 
 router = APIRouter()
 
@@ -19,8 +18,12 @@ def get_db():
     finally:
         db.close()
 
+import bcrypt
+
 @router.post("/users", response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    hashed_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
+
     db_user = models.User(
         firstname=user.firstname,
         lastname=user.lastname,
@@ -28,12 +31,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         birthdate=user.birthdate,
         city=user.city,
         postal_code=user.postal_code,
-        password=user.password,
+        password=hashed_password,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 @router.get("/users", response_model=list[schemas.UserOut])
 def list_users(db: Session = Depends(get_db)):
@@ -55,21 +59,7 @@ def delete_user(
     return {"message": "Utilisateur supprimé"}
 
 @router.post("/login")
-def login(email: str, password: str, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter_by(email=email).first()
-    if not user or not bcrypt.checkpw(password.encode(), user.password.encode()):
-        raise HTTPException(status_code=401, detail="Identifiants invalides")
-    
-    token_data = {
-        "email": user.email,
-        "is_admin": user.is_admin,
-        "exp": datetime.utcnow() + timedelta(hours=2)
-    }
-    token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
-    return {"access_token": token}
-
-@router.post("/login")
-def login(data: LoginRequest, db: Session = Depends(get_db)):
+def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter_by(email=data.email).first()
     if not user or not bcrypt.checkpw(data.password.encode(), user.password.encode()):
         raise HTTPException(status_code=401, detail="Identifiants invalides")
