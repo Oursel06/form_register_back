@@ -67,7 +67,7 @@ def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     token_data = {
         "email": user.email,
         "is_admin": user.is_admin,
-        "exp": int(datetime.utcnow() + timedelta(hours=2))
+        "exp": datetime.utcnow() + timedelta(hours=2)
     }
     token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
     return {"access_token": token}
