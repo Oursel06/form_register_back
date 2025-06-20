@@ -9,7 +9,7 @@ import os
 
 router = APIRouter()
 
-SECRET_KEY = os.getenv("SECRET_KEY", "lid5s6x64k6545f4dx4u96k5621s1c51c54d5g4h54h5jyjtrscdvdgr654b15f5h4t")
+SECRET_KEY = os.getenv("SECRET_KEY", "default_key")
 
 def get_db():
     db = database.SessionLocal()
@@ -67,7 +67,7 @@ def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
     token_data = {
         "email": user.email,
         "is_admin": user.is_admin,
-        "exp": datetime.utcnow() + timedelta(hours=2)
+        "exp": int(datetime.utcnow() + timedelta(hours=2))
     }
     token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
     return {"access_token": token}
