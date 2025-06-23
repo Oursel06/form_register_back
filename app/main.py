@@ -8,11 +8,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Pour permettre les requêtes CORS depuis localhost
-origins_regex = r"http://localhost:\d+"
+# Pour permettre les requêtes CORS depuis localhost et prod
+origins = [
+    "http://localhost:3000",
+    "https://oursel06.github.io",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=origins_regex,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
