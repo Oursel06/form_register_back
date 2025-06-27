@@ -18,8 +18,6 @@ def get_db():
     finally:
         db.close()
 
-import bcrypt
-
 @router.post("/users", response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     hashed_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
