@@ -63,8 +63,11 @@ def login(data: schemas.LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Identifiants invalides")
     
     token_data = {
+        "id": user.id,
         "email": user.email,
         "is_admin": user.is_admin,
+        "firstname": user.firstname,
+        "lastname": user.lastname,
         "exp": datetime.utcnow() + timedelta(hours=2)
     }
     token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
