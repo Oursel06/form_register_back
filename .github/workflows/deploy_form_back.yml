@@ -2,8 +2,8 @@ name: CI/CD Backend
 
 on:
   push:
-    tags:
-      - '*.*.*'
+    branches:
+      - main
 
 env:
   DOCKER_USERNAME: oursel06
